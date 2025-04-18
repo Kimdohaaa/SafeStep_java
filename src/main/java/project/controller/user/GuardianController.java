@@ -18,15 +18,15 @@ public class GuardianController {
 
     // [1] 보호자 회원가입
     @PostMapping("/signup")
-    public boolean signup(@RequestBody GuardianDto guardianDto){
+    public int signup(@RequestBody GuardianDto guardianDto){
         System.out.println("GuardianController.saveGuardian");
         System.out.println("guardianDto = " + guardianDto);
 
         GuardianDto result = guardianService.signup(guardianDto);
         if(result == null){
-            return  false;
+            return  0;
         }
-        return true;
+        return result.getGno();
     }
 
     // [2] 로그인
@@ -38,6 +38,7 @@ public class GuardianController {
         String token = guardianService.login(guardianDto);
 
         if (token == null) {
+            System.out.println("null 리턴");
             return null;
         }
 
@@ -45,6 +46,7 @@ public class GuardianController {
         HttpSession session = request.getSession();
         session.setAttribute("loginToken", token);
 
+        System.out.println("토큰확인 : " + token);
         return token;
     }
 
