@@ -24,6 +24,7 @@ public class PatientDto {
     private double plon; // 기본위치 경도
     private  int psafe; // 기본위치 기준 안정 반경
     private boolean pstate; // 기본위치 벗어남 여부
+    private String relation;
 
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
@@ -41,6 +42,7 @@ public class PatientDto {
                 .plon(this.plon)
                 .psafe(this.psafe)
                 .pstate(this.pstate)
+                .relation(this.relation)
                 .build();
     }
 

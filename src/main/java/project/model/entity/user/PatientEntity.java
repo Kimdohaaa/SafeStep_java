@@ -27,6 +27,7 @@ public class PatientEntity extends BaseTime {
     private double plon; // 기본위치 경도
     private  int psafe; // 기본위치 기준 안정 반경
     private boolean pstate; // 기본위치 벗어남 여부
+    private String relation;
 
     // Entity -변환-> DTO 메소드
     public PatientDto toDto(){
@@ -41,6 +42,7 @@ public class PatientEntity extends BaseTime {
                 .plon(this.plon)
                 .psafe(this.psafe)
                 .pstate(this.pstate)
+                .relation(this.relation)
                 .createAt(this.getCreateAt())
                 .updateAt(this.getUpdateAt())
                 .build();

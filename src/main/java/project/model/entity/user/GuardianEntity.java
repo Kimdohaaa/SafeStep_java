@@ -18,11 +18,17 @@ public class GuardianEntity extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  int gno;
 
+    @Column(nullable = true)
     private  String gname;
+    @Column(unique = true, nullable = true)
     private String gemail;
+    @Column(unique = true, nullable = true)
     private  String gphone;
-    private String grelation;
+    // private String grelation;
+
+    @Column(unique = true, nullable = true)
     private String gid;
+    @Column(nullable = true)
     private  String gpwd;
 
 

@@ -19,7 +19,7 @@ public class GuardianDto {
     private  String gname;
     private String gemail;
     private  String gphone;
-    private String grelation;
+    // private String grelation;
     private String gid;
     private  String gpwd;
 
@@ -32,7 +32,7 @@ public class GuardianDto {
                 .gname(this.gname)
                 .gemail(this.gemail)
                 .gphone(this.gphone)
-                .grelation(this.grelation)
+                // .grelation(this.grelation)
                 .gid(this.gid)
                 .gpwd(this.gpwd)
                 .build();
