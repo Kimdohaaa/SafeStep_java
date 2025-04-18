@@ -1,5 +1,6 @@
 package project.model.dto.user;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,16 +16,24 @@ import java.time.LocalDateTime;
 public class PatientDto {
     private  int pno;
 
+    @Column(nullable = true)
     private  String pname;
+    @Column(nullable = true, unique = true)
     private  String  pnumber;
+    @Column(nullable = true)
     private  boolean pgender;
+    @Column(nullable = true)
     private  String page;
+    @Column(nullable = true)
     private  int pgrade;
     private double plat; // 기본위치 위도
     private double plon; // 기본위치 경도
     private  int psafe; // 기본위치 기준 안정 반경
     private boolean pstate; // 기본위치 벗어남 여부
+    @Column(nullable = true)
     private String relation;
+
+    private  int gno;
 
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
@@ -43,6 +52,7 @@ public class PatientDto {
                 .psafe(this.psafe)
                 .pstate(this.pstate)
                 .relation(this.relation)
+                .gno(this.gno)
                 .build();
     }
 

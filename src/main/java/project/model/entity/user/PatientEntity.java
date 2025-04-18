@@ -29,6 +29,7 @@ public class PatientEntity extends BaseTime {
     private boolean pstate; // 기본위치 벗어남 여부
     private String relation;
 
+    private  int gno;
     // Entity -변환-> DTO 메소드
     public PatientDto toDto(){
         return PatientDto.builder()
@@ -45,6 +46,7 @@ public class PatientEntity extends BaseTime {
                 .relation(this.relation)
                 .createAt(this.getCreateAt())
                 .updateAt(this.getUpdateAt())
+                .gno(this.gno)
                 .build();
     }
 }
