@@ -33,6 +33,8 @@ public class PatientDto {
     @Column(nullable = true)
     private String relation;
 
+    private String pphone;
+
     private  int gno;
 
     private LocalDateTime createAt;
@@ -53,6 +55,7 @@ public class PatientDto {
                 .pstate(this.pstate)
                 .relation(this.relation)
                 .gno(this.gno)
+                .pphone(this.pphone)
                 .build();
     }
 

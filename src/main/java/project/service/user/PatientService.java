@@ -72,7 +72,8 @@ public class PatientService {
                 patientDto.getPage(),
                 patientDto.getPgrade(),
                 patientDto.getRelation(),
-                patientDto.getPno()
+                patientDto.getPno(),
+                patientDto.getPphone()
         );
         // 환자 안전 위치 수정 로직은 따로 구현하기 (프론트에서 네이버 맵으로 보낼 거임)
 

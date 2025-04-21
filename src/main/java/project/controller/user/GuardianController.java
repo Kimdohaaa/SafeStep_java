@@ -89,4 +89,12 @@ public class GuardianController {
 
         return guardianService.delete(gno, gpwd);
     }
+
+    // [7] 로그인된 gno 찾기
+    @GetMapping("/findgno")
+    public int findGno(){
+        System.out.println("GuardianController.findGno");
+
+        return guardianService.findGno();
+    }
 }

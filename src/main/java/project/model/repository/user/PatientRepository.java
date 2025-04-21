@@ -18,8 +18,8 @@ public  interface PatientRepository extends JpaRepository<PatientEntity, Integer
     @Modifying
     @Query(value = """
         update patient set pname = :pname , pnumber = :pnumber , pgender = :pgender,
-            page = :page, pgrade = :pgrade , relation = :relation where pno = :pno
+            page = :page, pgrade = :pgrade , relation = :relation, pphone = :pphone where pno = :pno
     """,nativeQuery = true)
     int updatePatient(String pname, String pnumber, boolean pgender,
-                      String page, int pgrade, String relation, int pno);
+                      String page, int pgrade, String relation, int pno, String pphone);
 }

@@ -30,6 +30,8 @@ public class PatientEntity extends BaseTime {
     private String relation;
 
     private  int gno;
+
+    private String pphone;
     // Entity -변환-> DTO 메소드
     public PatientDto toDto(){
         return PatientDto.builder()
@@ -47,6 +49,7 @@ public class PatientEntity extends BaseTime {
                 .createAt(this.getCreateAt())
                 .updateAt(this.getUpdateAt())
                 .gno(this.gno)
+                .pphone(this.pphone)
                 .build();
     }
 }

@@ -33,12 +33,15 @@ public class PatientController {
     }
 
     // [3] 환자 개별 조회
-    @GetMapping("find")
+    @GetMapping("/find")
     public PatientDto find(@RequestParam int pno) {
         System.out.println("PatientController.find");
         System.out.println("pno = " + pno);
 
-        return patientService.find(pno);
+        PatientDto result = patientService.find(pno);
+        System.out.println(result);
+
+        return result;
     }
 
     // [4] 환자 정보 수정

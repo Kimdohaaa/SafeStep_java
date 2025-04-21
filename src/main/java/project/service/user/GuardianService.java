@@ -21,6 +21,7 @@ public class GuardianService {
     // [*] JWT 객체 주입 (토큰에 사용)
     private  final JwtUtil jwtUtil;
 
+    private  int loginGno = 0;
     // [1] 보호자 회원가입
     public GuardianDto signup(GuardianDto guardianDto){
         System.out.println("GuardianService.signup");
@@ -61,6 +62,7 @@ public class GuardianService {
         if(inMatches == false){
             return  null;
         }
+        loginGno = guardianEntity.getGno();
 
         // 토큰 발급
         String token = jwtUtil.createToken(guardianEntity.getGid());
@@ -94,18 +96,18 @@ public class GuardianService {
     public boolean update(GuardianDto guardianDto){
         System.out.println("GuardianService.update");
         System.out.println("guardianDto = " + guardianDto);
+//
+//        Optional<GuardianEntity> optional = guardianRepository.findById(guardianDto.getGno());
+//        if(optional.isEmpty()){
+//            return  false;
+//        }
+//        GuardianEntity guardianEntity = optional.get();
 
-        Optional<GuardianEntity> optional = guardianRepository.findById(guardianDto.getGno());
-        if(optional.isEmpty()){
-            return  false;
-        }
-        GuardianEntity guardianEntity = optional.get();
-
-        // 비밀번호 검증
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        if(!bCryptPasswordEncoder.matches(guardianDto.getGpwd(), guardianEntity.getGpwd())){
-            return  false;
-        }
+//        // 비밀번호 검증
+//        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+//        if(!bCryptPasswordEncoder.matches(guardianDto.getGpwd(), guardianEntity.getGpwd())){
+//            return  false;
+//        }
 
         // 수정
         int result = guardianRepository.updateGuardian(
@@ -136,6 +138,13 @@ public class GuardianService {
 
         guardianRepository.deleteById(guardianEntity.getGno());
         return !guardianRepository.existsById(guardianEntity.getGno()); // 존재 여부 확인 후 없으면 true 반환
+    }
+
+    // [7] 로그인된 gno 찾기
+    public int findGno(){
+        System.out.println("GuardianService.findGno");
+
+        return loginGno;
     }
 
 }
