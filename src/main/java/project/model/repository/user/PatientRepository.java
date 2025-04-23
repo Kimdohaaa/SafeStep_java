@@ -30,8 +30,7 @@ public  interface PatientRepository extends JpaRepository<PatientEntity, Integer
             """,nativeQuery = true)
     int enrollLocation(double plon, double plat, int pno);
 
-    // [5] 현재 로그인된 Gno 에 등록된 환자들의 위치 정보 조회
-    @Query(value = "select * from patient where gno = :gno")
-    List<PatientEntity> findLocation(int gno);
-
+    // [5] 휴대폰번호로 pno 조회
+    @Query(value = "select pno from patient where pphone = :pphone",nativeQuery = true)
+    Integer findPno(String pphone);
 }

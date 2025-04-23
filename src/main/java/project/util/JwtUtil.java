@@ -1,19 +1,27 @@
 package project.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import project.model.dto.user.PatientDto;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class JwtUtil {
     // [*] 비밀키 (HS256 알고리즘 사용)
     private Key securityKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-
+    // [*] Redis 객체 선언
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
 
     // [1] JWT 토큰 발급
     public String createToken(String gid){
@@ -47,5 +55,23 @@ public class JwtUtil {
 
         return  null;
     }
+
+    // [3] 클라이언트 서버로부터 전달 받은환자의 현재 위치 Redis 에 저장
+    public boolean saveLocation(PatientDto patient) {
+        String key = "location" + patient.getPno();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String value = objectMapper.writeValueAsString(patient); // 직렬화
+
+            // Redis에 저장 (24시간 유효)
+            stringRedisTemplate.opsForValue().set(key, value, 24, TimeUnit.HOURS);
+
+            return true;  // 저장 성공
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return false; // 직렬화 실패
+        }
+    }
+
 
 }

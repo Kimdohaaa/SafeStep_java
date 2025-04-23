@@ -2,6 +2,7 @@ package project.service.location;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import project.model.dto.user.PatientDto;
 import project.model.entity.user.PatientEntity;
 import project.model.repository.user.PatientRepository;
+import project.util.JwtUtil;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LocationService {
     private final PatientRepository patientRepository;
+    private final JwtUtil jwtUtil;
 
     // [1] 환자 안전 위치 최초 등록
     public boolean enrollLocation(PatientDto patientDto){
@@ -40,14 +44,21 @@ public class LocationService {
         return  false;
     }
 
+    // [2] 환자의 휴대폰번호를 통해 인증 및 pno 조회
+    public Integer findPno(String pphone){
+        System.out.println("LocationService.findPno");
+        System.out.println("pphone = " + pphone);
 
-    // [2] 현재 로그인된 Gno 에 등록된 환자들의 위치 정보 조회
-    public List<PatientDto> findLocation( int gno){
-        System.out.println("LocationService.findLocation");
-        System.out.println("gno = " + gno);
-
-        return patientRepository.findLocation(gno).stream()
-                .map(PatientEntity::toDto)
-                .collect(Collectors.toList());
+        return patientRepository.findPno(pphone);
     }
+
+    // [3] 클라이언트 서버로부터 전달 받은환자의 현재 위치 Redis 에 저장
+    public boolean saveLocation(PatientDto patientDto){
+        System.out.println("LocationService.saveLocation");
+        System.out.println("patientDto = " + patientDto);
+
+        return jwtUtil.saveLocation(patientDto);
+    }
+
+
 }
