@@ -43,6 +43,7 @@ public class LocationController {
         System.out.println("LocationController.saveLocation");
         System.out.println("patientDto = " + patientDto);
 
+        System.out.println("위치정보받음");
         return locationService.saveLocation(patientDto);
     }
 }
