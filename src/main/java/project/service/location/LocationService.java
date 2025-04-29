@@ -57,7 +57,14 @@ public class LocationService {
         System.out.println("LocationService.saveLocation");
         System.out.println("patientDto = " + patientDto);
 
-        return jwtUtil.saveLocation(patientDto);
+        // DB 에 저장된 안전 위치 조회
+        PatientEntity saveLocation = patientRepository.findSaveLocation(patientDto.getPno());
+        PatientDto findPatientDto = saveLocation.toDto();
+        double savePlon = findPatientDto.getPlon();
+        double savePlat = findPatientDto.getPlat();
+
+        // 위치 비교를 위해 현재 환자의 위치정보와 조회한 안전 위치 정보 매개변수로 전달
+        return jwtUtil.saveLocation(patientDto, savePlon, savePlat);
     }
 
 

@@ -57,7 +57,7 @@ public class JwtUtil {
     }
 
     // [3] 클라이언트 서버로부터 전달 받은환자의 현재 위치 Redis 에 저장
-    public boolean saveLocation(PatientDto patient) {
+    public boolean saveLocation(PatientDto patient, double savePlon, double savePlat) {
         String key = "location" + patient.getPno();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -66,11 +66,43 @@ public class JwtUtil {
             // Redis에 저장 (24시간 유효)
             stringRedisTemplate.opsForValue().set(key, value, 24, TimeUnit.HOURS);
 
-            return true;  // 저장 성공
+            double distance = calculateDistance(
+                    patient.getPlon(), patient.getPlat(),
+                    savePlon, savePlat
+            );
+
+            // 150 이내면 true 반환 아니면 false 반환
+            return distance <= 150;
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return false; // 직렬화 실패
         }
+    }
+
+    // [#] 거리 계산 메소드
+    // plon, plat : 클라이언트에서 보낸 환자의 현재 위치
+    // savePlon, savePlat : DB 에 저장된 환자의 안전 위치
+    public double calculateDistance(double plon, double plat, double savePlon, double savePlat) {
+        final int R = 6371000; // 지구의 반지름 (단위: 미터). 거리 계산을 위해 사용됨
+
+        // 위도 차이를 라디안 단위로 변환 (위도는 북쪽/남쪽 방향 거리 차이)
+        double dLat = Math.toRadians(savePlat - plat);
+
+        // 경도 차이를 라디안 단위로 변환 (경도는 동쪽/서쪽 방향 거리 차이)
+        double dLon = Math.toRadians(savePlon - plon);
+
+
+        // 두 위치 간의 중심 각(angular distance) 구하기
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(plat)) * Math.cos(Math.toRadians(savePlat))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        // 중심 각을 거리로 변환 (대각선 거리 구함)
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // 최종 거리 계산 : 중심각 c에 지구 반지름 R을 곱해 실제 거리(m)로 환산
+        return R * c;
     }
 
 
