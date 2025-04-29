@@ -47,4 +47,14 @@ public class LocationController {
         return locationService.saveLocation(patientDto);
 
     }
+
+    // [4] 환자의 이동경로 요청
+    @GetMapping("/findroute")
+    public List<PatientDto> findRoute(@RequestParam int pno){
+        System.out.println("LocationController.findRoute");
+        System.out.println("pno = " + pno);
+
+        System.out.println("위치정보 조회");
+        return locationService.findRoute(pno);
+    }
 }

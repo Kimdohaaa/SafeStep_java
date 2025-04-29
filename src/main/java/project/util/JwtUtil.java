@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import project.model.dto.user.PatientDto;
 
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -59,20 +60,38 @@ public class JwtUtil {
     // [3] 클라이언트 서버로부터 전달 받은환자의 현재 위치 Redis 에 저장
     public boolean saveLocation(PatientDto patient, double savePlon, double savePlat) {
         String key = "location" + patient.getPno();
+        String stateKey = "state" + patient.getPno(); // 안전 상태를 저장할 키
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            String value = objectMapper.writeValueAsString(patient); // 직렬화
-
-            // Redis에 저장 (24시간 유효)
-            stringRedisTemplate.opsForValue().set(key, value, 24, TimeUnit.HOURS);
-
+            // 안전 반경 내인 지 검사
             double distance = calculateDistance(
                     patient.getPlon(), patient.getPlat(),
                     savePlon, savePlat
             );
 
-            // 150 이내면 true 반환 아니면 false 반환
-            return distance <= 150;
+            // 150 이내면 true 아니면 false
+            boolean currentState = distance <= 150;
+            patient.setPstate(currentState);
+
+            // 직렬화
+            String value = objectMapper.writeValueAsString(patient);
+
+            stringRedisTemplate.delete("location1"); // 환자 번호에 맞게 location{pno} 형태로!
+
+            // Redis에 저장 (24시간 유효)
+            stringRedisTemplate.opsForList().rightPush(key, value);
+            stringRedisTemplate.expire(key, 24, TimeUnit.HOURS);
+
+            // stringRedisTemplate.opsForValue().set(key, value, 24, TimeUnit.HOURS);
+
+
+            // Redis 저장 확인
+            List<String> redisList = stringRedisTemplate.opsForList().range(key, -1, -1);
+            if (redisList != null && !redisList.isEmpty()) {
+                System.out.println("레디스에 저장된 값 " + redisList.get(0));
+            }
+
+            return currentState;
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -106,4 +125,34 @@ public class JwtUtil {
     }
 
 
+    // [4] 안전 위치를 벗어난 환자의 이동 경로조회
+    public List<PatientDto> findRoute(int pno){
+        System.out.println("JwtUtil.findRoute");
+        System.out.println("pno = " + pno);
+
+        String key = "location" + pno;
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<PatientDto> result = new ArrayList<>();
+
+        // Redis 리스트에 저장된 모든 위치 데이터 가져오기
+        List<String> redisDataList = stringRedisTemplate.opsForList().range(key, 0, -1);
+
+        if (redisDataList != null) {
+            for (String item : redisDataList) {
+                try {
+                    PatientDto patientDto = objectMapper.readValue(item, PatientDto.class);
+
+                    // 같은 환자 번호 && pstate == false
+                    if (patientDto.getPno() == pno && patientDto.isPstate() == false) {
+                        result.add(patientDto);
+                    }
+                } catch (JsonProcessingException e) {
+                    System.out.println(e);
+                }
+            }
+        }
+
+        return result;
+
+    }
 }

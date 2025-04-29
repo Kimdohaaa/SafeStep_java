@@ -67,5 +67,14 @@ public class LocationService {
         return jwtUtil.saveLocation(patientDto, savePlon, savePlat);
     }
 
+    // [4] 환자의 이동경로 요청
+    public List<PatientDto> findRoute(int pno){
+        System.out.println("LocationService.findRoute");
+        System.out.println("pno = " + pno);
+
+        System.out.println("위치정보 조회");
+        return jwtUtil.findRoute(pno);
+    }
+
 
 }
