@@ -22,11 +22,9 @@ public class GuardianController {
         System.out.println("GuardianController.saveGuardian");
         System.out.println("guardianDto = " + guardianDto);
 
-        GuardianDto result = guardianService.signup(guardianDto);
-        if(result == null){
-            return  0;
-        }
-        return result.getGno();
+        int result = guardianService.signup(guardianDto);
+
+        return result;
     }
 
     // [2] 로그인
@@ -74,7 +72,7 @@ public class GuardianController {
 
     // [5] 보호자 수정
     @PutMapping("/update")
-    public boolean update(@RequestBody GuardianDto guardianDto){
+    public int update(@RequestBody GuardianDto guardianDto){
         System.out.println("GuardianController.update");
         System.out.println("guardianDto = " + guardianDto);
 

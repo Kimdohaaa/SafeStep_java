@@ -16,7 +16,7 @@ public class PatientController {
 
     // [1] 환자 등록
     @PostMapping("/enroll")
-    public PatientDto enroll(@RequestBody PatientDto patientDto){
+    public int enroll(@RequestBody PatientDto patientDto){
         System.out.println("PatientController.enroll");
         System.out.println("patientDto = " + patientDto);
 
@@ -46,7 +46,7 @@ public class PatientController {
 
     // [4] 환자 정보 수정
     @PutMapping("/update")
-    public boolean update(@RequestBody PatientDto patientDto){
+    public int update(@RequestBody PatientDto patientDto){
         System.out.println("PatientController.update");
         System.out.println("patientDto = " + patientDto);
 
