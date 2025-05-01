@@ -61,4 +61,6 @@ public class PatientController {
 
         return patientService.delete(pno);
     }
+
+
 }

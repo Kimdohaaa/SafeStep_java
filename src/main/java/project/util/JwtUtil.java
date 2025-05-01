@@ -6,10 +6,13 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
+import project.model.dto.user.GuardianDto;
 import project.model.dto.user.PatientDto;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -154,5 +157,56 @@ public class JwtUtil {
 
         return result;
 
+    }
+
+    // [5] 클라이언트 서버가 요청한 pno 에 해당하는 레디스 내 최신 위치정보 반환
+    public List<PatientDto> getLastLocations(List<Integer> pnoList) {
+        List<PatientDto> lastLocations = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        for (Integer pno : pnoList) {
+            String key = "location" + pno;
+
+            // Redis에서 해당 환자의 마지막 위치 정보 가져오기
+            List<String> values = stringRedisTemplate.opsForList().range(key, -1, -1);
+
+            if (values != null && !values.isEmpty()) {
+                String latestValue = values.get(0);
+                try {
+                    PatientDto patient = objectMapper.readValue(latestValue, PatientDto.class);
+                    lastLocations.add(patient);
+                } catch (JsonProcessingException e) {
+                    System.out.println(e);
+                }
+            }
+        }
+
+
+        return lastLocations;
+    }
+
+    // [6] 앱 실행 FCM 토큰을 발급받아서 레디스에 저장
+    public boolean saveFcmToken(int gno, String fcmToken, List<Integer> pnoList ){
+
+        try {
+            GuardianDto guardianDto = new GuardianDto();
+            guardianDto.setGno(gno);
+            guardianDto.setFcmToken(fcmToken);
+            guardianDto.setPnoList(pnoList);
+
+            String redisKey = "guardian:" + gno;
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            String json = objectMapper.writeValueAsString(guardianDto);
+            String key = "guardian:" + gno;
+
+            stringRedisTemplate.opsForValue().set(key, json, Duration.ofHours(24));
+            return true;
+
+        }catch (Exception e){
+            System.out.println(e);
+            return false;
+        }
     }
 }

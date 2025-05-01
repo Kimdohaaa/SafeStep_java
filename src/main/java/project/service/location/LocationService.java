@@ -13,6 +13,7 @@ import project.model.entity.user.PatientEntity;
 import project.model.repository.user.PatientRepository;
 import project.util.JwtUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -76,5 +77,29 @@ public class LocationService {
         return jwtUtil.findRoute(pno);
     }
 
+    // [5] 클라이언트 서버가 요청한 pno 에 해당하는 레디스 내 최신 위치정보 반환
+    public List<PatientDto> getLastLocations( List<Integer> pnoList){
+        System.out.println("LocationService.getLastLocations");
+        System.out.println("pnoList = " + pnoList);
 
+        return  jwtUtil.getLastLocations(pnoList);
+    }
+
+    // [6] 앱 실행 FCM 토큰을 발급받아서 레디스에 저장
+    public boolean saveFcmToken(@RequestParam int gno , @RequestParam String fcmToken){
+        System.out.println("LocationController.saveFcmToken");
+        System.out.println("pno = " + pno + ", fcmToken = " + fcmToken);
+
+        // 해당 보호자가 관리중인 환자 번호 가져오기
+        List<PatientDto> patientList = patientRepository.findByGno(gno).stream()
+                .map(PatientEntity::toDto)
+                .collect(Collectors.toList());
+
+        List<Integer> pnoList = new ArrayList<>();
+        for (PatientDto patient : patientList) {
+            pnoList.add(patient.getPno()); // getpno() 메서드 호출
+        }
+
+        return jwtUtil.saveFcmToken(gno, fcmToken, pnoList);
+    }
 }

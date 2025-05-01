@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import project.model.entity.user.GuardianEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +27,9 @@ public class GuardianDto {
     private LocalDateTime createAt;
     private  LocalDateTime updateAt;
 
+
+    private List<Integer> pnoList;
+    private String fcmToken;
     // DTO -변환-> Entity 메소드
     public GuardianEntity toEntity (){
         return GuardianEntity.builder()

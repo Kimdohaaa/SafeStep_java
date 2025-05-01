@@ -57,4 +57,23 @@ public class LocationController {
         System.out.println("위치정보 조회");
         return locationService.findRoute(pno);
     }
+
+    // [5] 클라이언트 서버가 요청한 pno 에 해당하는 레디스 내 최신 위치정보 반환
+    @PostMapping("/lastroute")
+    public List<PatientDto> getLastLocations(@RequestBody List<Integer> pnoList){
+        System.out.println("LocationController.getLastLocations");
+        System.out.println("pno 리스트 확인 = " + pnoList);
+
+        return  locationService.getLastLocations(pnoList);
+    }
+
+    // [6] 앱 실행 FCM 토큰을 발급받아서 레디스에 저장
+    @PostMapping("/savefcmtoken")
+    public boolean saveFcmToken(@RequestParam int gno , @RequestParam String fcmToken){
+        System.out.println("LocationController.saveFcmToken");
+        System.out.println("gno = " + gno + ", fcmToken = " + fcmToken);
+
+
+        return locationService.saveFcmToken(gno, fcmToken);
+    }
 }
