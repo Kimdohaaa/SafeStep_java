@@ -48,6 +48,11 @@ dependencies {
 
     // Redis 라이브러리
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp (FCM 푸시 알림용)
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
+
+    implementation 'org.json:json:20240303'
 }
 
 tasks.named('test') {

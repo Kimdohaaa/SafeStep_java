@@ -209,4 +209,22 @@ public class JwtUtil {
             return false;
         }
     }
+
+    // [7] 클라이언트 서버의 요청 시 푸시 알림을 보내기 위해 토큰 반환하기
+    public  String findFcmToken(int gno){
+        String key = "guardian:" + gno;
+        String json = stringRedisTemplate.opsForValue().get(key);
+
+        if (json == null) return null;
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            GuardianDto guardian = objectMapper.readValue(json, GuardianDto.class);
+            System.out.println("레디스에서 조회한 정보확인(FCM토큰관련)" + guardian);
+            return guardian.getFcmToken();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

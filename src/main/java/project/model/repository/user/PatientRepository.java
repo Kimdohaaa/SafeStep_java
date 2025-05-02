@@ -37,4 +37,8 @@ public  interface PatientRepository extends JpaRepository<PatientEntity, Integer
     // [6] 환자의 안전 위치 조회
     @Query(value = "select * from patient where pno = :pno",nativeQuery = true)
     PatientEntity findSaveLocation(int pno);
+
+    // [7] 특정환자의 보호자 PK 번호 조회
+    @Query(value = "select * from patient where pno = :pno", nativeQuery = true)
+    PatientEntity findPatientByGno(int pno);
 }

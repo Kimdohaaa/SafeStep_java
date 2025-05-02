@@ -74,6 +74,20 @@ public class LocationController {
         System.out.println("gno = " + gno + ", fcmToken = " + fcmToken);
 
 
+        System.out.println("발급된 FCM 토큰 : " + fcmToken);
         return locationService.saveFcmToken(gno, fcmToken);
+    }
+
+    // [7] 클라이언트 서버의 요청 시 푸시 알림을 보내기 위해 토큰 반환하기
+    @GetMapping("/findfcmtoken")
+    public String findFcmToken(@RequestParam int pno){
+        System.out.println("LocationController.findFcmToken");
+        System.out.println("pno = " + pno);
+
+        String fcmToken = locationService.findFcmToken(pno);
+
+        System.out.println("반환할 토큰 확인 : " + fcmToken);
+
+        return  fcmToken;
     }
 }

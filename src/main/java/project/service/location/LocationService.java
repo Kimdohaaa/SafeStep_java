@@ -55,17 +55,24 @@ public class LocationService {
 
     // [3] 클라이언트 서버로부터 전달 받은환자의 현재 위치 Redis 에 저장
     public boolean saveLocation(PatientDto patientDto){
+
         System.out.println("LocationService.saveLocation");
         System.out.println("patientDto = " + patientDto);
 
         // DB 에 저장된 안전 위치 조회
-        PatientEntity saveLocation = patientRepository.findSaveLocation(patientDto.getPno());
-        PatientDto findPatientDto = saveLocation.toDto();
-        double savePlon = findPatientDto.getPlon();
-        double savePlat = findPatientDto.getPlat();
+        Optional<PatientEntity> saveLocation = Optional.ofNullable(patientRepository.findSaveLocation(patientDto.getPno()));
+        if (saveLocation.isPresent()) {
+            PatientDto findPatientDto = saveLocation.get().toDto();
+            double savePlon = findPatientDto.getPlon();
+            double savePlat = findPatientDto.getPlat();
 
-        // 위치 비교를 위해 현재 환자의 위치정보와 조회한 안전 위치 정보 매개변수로 전달
-        return jwtUtil.saveLocation(patientDto, savePlon, savePlat);
+            // 위치 비교를 위해 현재 환자의 위치정보와 조회한 안전 위치 정보 매개변수로 전달
+            return jwtUtil.saveLocation(patientDto, savePlon, savePlat);
+        } else {
+            // 안전 위치가 없는 경우 처리
+            System.out.println("환자 정보 없음");
+            return false;
+        }
     }
 
     // [4] 환자의 이동경로 요청
@@ -88,7 +95,7 @@ public class LocationService {
     // [6] 앱 실행 FCM 토큰을 발급받아서 레디스에 저장
     public boolean saveFcmToken(@RequestParam int gno , @RequestParam String fcmToken){
         System.out.println("LocationController.saveFcmToken");
-        System.out.println("pno = " + pno + ", fcmToken = " + fcmToken);
+        System.out.println("Gno = " + gno + ", fcmToken = " + fcmToken);
 
         // 해당 보호자가 관리중인 환자 번호 가져오기
         List<PatientDto> patientList = patientRepository.findByGno(gno).stream()
@@ -101,5 +108,23 @@ public class LocationService {
         }
 
         return jwtUtil.saveFcmToken(gno, fcmToken, pnoList);
+    }
+
+    // [7] 클라이언트 서버의 요청 시 푸시 알림을 보내기 위해 토큰 반환하기
+    public String findFcmToken(int pno){
+        System.out.println("LocationController.findFcmToken");
+        System.out.println("pno = " + pno);
+
+        // 해당 환자에 해당하는 gno 가져오기
+        PatientEntity patientEntity = patientRepository.findPatientByGno(pno);
+        if(patientEntity != null){
+            int gno = patientEntity.getGno();
+
+            System.out.println("조회한 보호자 번호 : " + gno);
+            String fcmToken = jwtUtil.findFcmToken(gno);
+
+            return  fcmToken;
+        }
+        return  null;
     }
 }
