@@ -14,11 +14,13 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Transactional
 public class FCMMessageService {
-    private final String API_URL = "https://fcm.googleapis.com/fcm/send";
-    private final String SERVER_KEY = "";  // Firebase 콘솔에서 서버키 가져와서 바꾸기
+    private final String API_URL = "https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send";//"https://fcm.googleapis.com/fcm/send";
+    private final String SERVER_KEY = "c3ed0f5d75c6128331984d7742095440c6786f04";  // Firebase 콘솔에서 서버키 가져와서 바꾸기
 
     public void sendMessageTo(String targetToken, String title, String body) throws IOException {
         JSONObject message = new JSONObject();
+
+
         message.put("to", targetToken);
 
         JSONObject notification = new JSONObject();

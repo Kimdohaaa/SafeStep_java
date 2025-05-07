@@ -24,6 +24,7 @@ public class FCMMessageController {
         String title = payload.get("title");
         String body = payload.get("body");
 
+
         fcmMessageService.sendMessageTo(token, title, body);
         return ResponseEntity.ok("알림 전송 완료");
     }

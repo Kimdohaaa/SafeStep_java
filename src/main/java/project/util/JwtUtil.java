@@ -79,7 +79,7 @@ public class JwtUtil {
             // 직렬화
             String value = objectMapper.writeValueAsString(patient);
 
-            stringRedisTemplate.delete("location1"); // 환자 번호에 맞게 location{pno} 형태로!
+//            stringRedisTemplate.delete("location1"); // 환자 번호에 맞게 location{pno} 형태로바꿔야됨
 
             // Redis에 저장 (24시간 유효)
             stringRedisTemplate.opsForList().rightPush(key, value);
