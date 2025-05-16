@@ -1,4 +1,4 @@
-## Spring / Flutter Project 
+## SafeStep(Spring/Flutter Project)
 -----------
 고령화 사회로 진입할수록 증가하는 치매 노인 실종 문제를 방지하기 위해 보호자가 치매환자의 위치를 실시간으로 조회할 수 있는 기능을 제공하는 어플
 
